@@ -1,0 +1,19 @@
+﻿@model TodoApp.ViewModels.TodoItemViewModel
+
+<h2>Create New Todo</h2>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="Title"></label>
+        <input asp-for="Title" />
+    </div>
+    <div>
+        <label asp-for="Priority"></label>
+        <select asp-for="Priority">
+            <option value="low">Low</option>
+            <option value="normal" selected>Normal</option>
+            <option value="high">High</option>
+        </select>
+    </div>
+    <button type="submit">Save</button>
+</form>

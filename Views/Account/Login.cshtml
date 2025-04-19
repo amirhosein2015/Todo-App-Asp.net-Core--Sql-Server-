@@ -1,0 +1,55 @@
+﻿ @model TodoApp.ViewModels.LoginViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="~/css/loginstyle.css" rel="stylesheet" />
+   
+
+</head>
+
+<body>
+
+
+
+    <div class="form-container">
+        <h2>Login</h2>
+        <form asp-controller="Account" asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <div class="input-group">
+                <label asp-for="Username"></label>
+                <input asp-for="Username" placeholder="Enter your username" />
+            </div>
+            <div class="input-group">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" placeholder="Enter your password" />
+            </div>
+            <div class="input-group checkbox-group">
+                <input asp-for="RememberMe" type="checkbox" id="remember-me" />
+                <label for="remember-me">Remember me</label>
+            </div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error">
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
+            <div class="input-group">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+        <div class="toggle-form">
+            Don't have an account? <a asp-controller="Account" asp-action="Register">Register here</a>
+        </div>
+    </div>
+
+</body>
+</html>

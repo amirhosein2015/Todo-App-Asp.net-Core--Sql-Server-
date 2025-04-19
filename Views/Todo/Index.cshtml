@@ -1,0 +1,318 @@
+﻿@model TodoApp.ViewModels.TodoViewModel
+<!--این ویو به یک ویو مدل به نام تودو ویو مدل دسترسی داره-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/css/todomainstyle.css" rel="stylesheet" />
+
+</head>
+
+
+
+
+<div class="container">
+   
+    <div class="row">
+        <!-- پنل سمت چپ -->
+        <div class="side-panel">
+            <h3>@User.Identity.Name</h3>
+            <hr />
+            <!-- دکمه All Todo -->
+            <form asp-controller="Todo" asp-action="Index" method="get">
+                <button type="submit" class="panel-btn">All Todo</button>
+            </form>
+
+            <!-- دکمه Archived -->
+            <form asp-controller="Todo" asp-action="Archived" method="get">
+                <button type="submit" class="panel-btn">Archived</button>
+            </form>
+
+            <!-- دکمه About Us -->
+            <a href="https://github.com/search?q=amirhosein2015&type=repositories" class="panel-btn">About Us</a>
+
+            <!-- دکمه Logout -->
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="panel-btn">Logout</button>
+            </form>
+        </div>
+
+        <!-- محتوای اصلی -->
+        <div class="main-content">
+            <h2>Todos</h2>
+            <hr />
+
+
+    <!-- فرم ایجاد یک Todo جدید -->
+    <div class="create-todo">
+        @*ارسال این فرم به متد کریت در کنترلر *@
+        <form asp-action="Create" method="post" class="form-inline">
+                    @Html.AntiForgeryToken()
+            <input type="text" name="Title" placeholder="Title" required style="flex: 2;" />
+            <select name="Priority" style="flex: 1;">
+                <option value="Low">Low</option>
+                <option value="Normal">Normal</option>
+                <option value="High">High</option>
+            </select>
+                    <input type="datetime-local" name="CreatedAt" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" style="flex: 1;" />
+            @* <input type="date" name="CreatedAt" value="@DateTime.Now.ToString("yyyy-MM-dd")" style="flex: 1;" /> *@
+            <button type="submit" class="btn-create" style="flex: 0.5;">Create</button>
+        </form>
+    </div>
+
+    <!-- جعبه جستجو -->
+    <div class="search-box">
+        <form id="searchForm" method="post" asp-action="Search">
+                    @Html.AntiForgeryToken()
+                    @* مقدار پیش‌فرض از مدل گرفته می‌شه *@
+            <input type="text" name="SearchQuery" placeholder="Search Todos..." value="@Model.SearchQuery" />
+            <select name="PriorityFilter">
+                <option value="">All Priorities</option>
+                <option value="Low" selected="@(Model.PriorityFilter == "Low")">Low</option>
+                <option value="Normal" selected="@(Model.PriorityFilter == "Normal")">Normal</option>
+                <option value="High" selected="@(Model.PriorityFilter == "High")">High</option>
+            </select>
+
+            <select name="IsFinishedFilter">
+                <option value="">All Status</option>
+                <option value="true" selected="@(Model.IsFinishedFilter == true)">Finished</option>
+                <option value="false" selected="@(Model.IsFinishedFilter == false)">Unfinished</option>
+            </select>
+            <label for="StartDateFilter">Start:</label>
+            <input type="date" name="StartDateFilter" value="@(Model.StartDateFilter?.ToString("yyyy-MM-dd"))" />
+            <label for="EndDateFilter">End:</label>
+            <input type="date" name="EndDateFilter" value="@(Model.EndDateFilter?.ToString("yyyy-MM-dd"))" />
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+
+
+            <div id="successMessage" class="toast" style="display: none;"></div>
+
+
+
+
+            <!--برای تغییر ترتیب، تنها کافیه مقادیر آرایه رو جابجا کنیم-->
+    <!-- کادرهای Todos براساس اولویت -->
+    <div class="todo-categories">
+        @foreach (var category in new[] { "Low", "Normal", "High" })
+        {
+            <div class="todo-category" id="@category.ToLower()-priority">
+                <h3>@category Priority</h3>
+                <hr />
+                <div class="todo-header">
+                    <span>Title</span>
+                    <span>Priority</span>
+                    <span>Date</span>
+                    <span>Finish</span>
+                    <span>Archived</span>
+                    <span>Edit</span>
+                    <span>Delete</span>
+                </div>
+                @foreach (var todo in Model.Todos.Where(t => t.Priority == category && !t.IsArchived))
+                {
+                    <div class="todo-item" style="background-color: @(category == "Low" ? "#ffffcc" : category == "Normal" ? "#ccffcc" : "#ffcccc");">
+                        <span class="todo-title @(todo.IsFinished ? "finished-text" : "")">@todo.Title</span>
+                        <span class="todo-priority">@todo.Priority</span>
+                        <span class="todo-date">@todo.CreatedAt?.ToString("yyyy-MM-dd")</span>
+                        <label>
+                            Done
+                            <input type="checkbox" data-id="@todo.Id" data-field="IsFinished"
+                            @(todo.IsFinished ? "checked" : "") onchange="updateTodoStatus(this)" />
+                        </label>
+                        <label>
+                            Archive
+                            <input type="checkbox" data-id="@todo.Id" data-field="IsArchived"
+                            @(todo.IsArchived ? "checked" : "") onchange="updateTodoStatus(this)" />
+                        </label>
+                        <button class="btn-edit" onclick="openEditModal(@todo.Id)">Edit</button>
+                        <form asp-action="Delete" asp-controller="Todo" method="post" class="inline-form">
+                            <input type="hidden" name="id" value="@todo.Id" />
+                            <button type="submit" class="btn-delete">Delete</button>
+                        </form>
+                        
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+</div>
+</div>
+
+
+<!-- مدال ویرایش -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <div id="editModalBody">
+            <!-- محتوا با Ajax پر می‌شود -->
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function updateTodoStatus(checkbox) {
+        // const todoId = checkbox.getAttribute("data-id");
+        // const field = checkbox.getAttribute("data-field");
+        //بخاطر امنیت بیشتر از این استفاده میکنم//
+            const todoId = checkbox.dataset.id;
+    const field = checkbox.dataset.field;
+
+
+
+
+        const value = checkbox.checked;
+
+
+            const todoItem = checkbox.closest(".todo-item");
+
+    // اعمال تغییرات در ظاهر یا حذف از صفحه بر اساس فیلد
+    if (field === "IsFinished") {
+        const titleElement = todoItem.querySelector(".todo-title");
+        titleElement.classList.toggle("finished-text", value);
+    } else if (field === "IsArchived") {
+        if (value) {
+            // نمایش پیام موفقیت
+            showSuccessMessage("Archived successfully");
+
+            // حذف از صفحه
+            todoItem.remove();
+        } else {
+            
+            // در صورت لغو آرشیو، عملیات دیگر را انجام دهید
+            
+        }
+    }
+
+
+
+        checkbox.disabled = true;
+        fetch('/Todo/UpdateStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ id: todoId, field: field, value: value })
+        }).then(response => {
+            if (response.ok && field === "IsArchived" && !value) {
+                // اگر آرشیو از حالت فعال خارج شد و درخواست موفق بود
+               
+            }
+
+
+        }).finally(() => {
+            checkbox.disabled = false;
+        });
+    }
+
+    function openEditModal(todoId) {
+        const modal = document.getElementById("editModal");
+        const modalBody = document.getElementById("editModalBody");
+
+        fetch(`/Todo/Edit/${todoId}`)
+            .then(response => response.text())
+            .then(html => {
+                modalBody.innerHTML = html;
+                modal.style.display = "block";
+            });
+    }
+
+    function closeEditModal() {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "none";
+    }
+
+
+
+
+
+
+        document.getElementById('searchButton').addEventListener('click', function (event) {
+        event.preventDefault(); // جلوگیری از رفتار پیش‌فرض
+        const query = document.getElementById('searchInput').value;
+
+        // ارسال درخواست جستجو
+        fetch(`/Todo/Search?query=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Error fetching search results");
+                return response.text();
+            })
+            .then(html => {
+                document.getElementById('todoList').innerHTML = html;
+            })
+            .catch(error => {
+                console.error("Error during search:", error);
+            });
+    });
+
+
+
+
+
+    //تابع نمایش پیام//
+
+        function showSuccessMessage(message) {
+        // ایجاد یک عنصر برای پیام
+        const messageElement = document.createElement("div");
+        messageElement.textContent = message;
+
+        // استایل‌دهی برای نمایش در وسط صفحه
+        messageElement.style.position = "fixed";
+        messageElement.style.top = "50%";
+        messageElement.style.left = "50%";
+        messageElement.style.transform = "translate(-50%, -50%)";
+        messageElement.style.padding = "20px 30px";
+        messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+        messageElement.style.color = "#3813C2";
+        messageElement.style.border = "1px solid rgba(255, 255, 255, 0.5)";
+        messageElement.style.borderRadius = "12px";
+        messageElement.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+        messageElement.style.fontSize = "16px";
+        messageElement.style.zIndex = "1000";
+        messageElement.style.backdropFilter = "blur(5px)";
+        messageElement.style.textAlign = "center";
+        messageElement.style.fontWeight = "bold";
+
+        // افزودن پیام به بدنه صفحه
+        document.body.appendChild(messageElement);
+
+        // حذف پیام بعد از 3 ثانیه
+        setTimeout(() => {
+            messageElement.remove();
+        }, 1000);
+    }
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

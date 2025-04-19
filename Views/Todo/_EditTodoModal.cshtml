@@ -1,0 +1,83 @@
+﻿@model TodoApp.ViewModels.TodoItemViewModel
+
+@* <form asp-action="Edit" asp-controller="Todo" method="post">
+    <input type="hidden" name="id" value="@Model.Id" /> *@
+    <form asp-action="Edit" asp-controller="Todo" method="post">
+        <input type="hidden" asp-for="Id" />
+
+
+    <div>
+        <label for="Title">Title</label>
+        <input type="text" id="Title" name="Title" value="@Model.Title" required />
+    </div>
+    <div>
+        <label for="Priority">Priority</label>
+        <select asp-for="Priority" class="form-control">
+            <option value="Low" selected="@(Model.Priority == "Low")">Low</option>
+            <option value="Normal" selected="@(Model.Priority == "Normal")">Normal</option>
+            <option value="High" selected="@(Model.Priority == "High")">High</option>
+        </select>
+
+
+
+    </div>
+    <div>
+        <label for="CreatedAt">Created At</label>
+        <input type="datetime-local" id="CreatedAt" name="CreatedAt" 
+               value="@(Model.CreatedAt.HasValue ? Model.CreatedAt.Value.ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+    </div>
+    <div>
+      @*   <label>
+            <input type="checkbox" name="IsFinished" @(Model.IsFinished ? "checked" : "") />
+            Finished
+        </label>
+    </div>
+    <div>
+        <label>
+            <input type="checkbox" name="IsArchived" @(Model.IsArchived ? "checked" : "") />
+            Archived
+        </label> *@
+
+        <input type="hidden" name="IsFinished" value="@(Model.IsFinished ? "true" : "false")" />
+        <input type="hidden" name="IsArchived" value="@(Model.IsArchived ? "true" : "false")" />
+
+
+
+    </div>
+    <div>
+        <button type="submit">Save Changes</button>
+    </div>
+</form>
+@section Scripts {
+    <script>
+        document.querySelectorAll('input[type="checkbox"][name="IsFinished"]').forEach(checkbox => {
+            checkbox.addEventListener('change', async (event) => {
+                const isChecked = event.target.checked;
+                const todoId = document.querySelector('input[name="Id"]').value;
+
+                await fetch('/Todo/UpdateFinishedStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: todoId, isFinished: isChecked })
+                });
+            });
+        });
+
+        document.querySelectorAll('input[type="checkbox"][name="IsArchived"]').forEach(checkbox => {
+            checkbox.addEventListener('change', async (event) => {
+                const isChecked = event.target.checked;
+                const todoId = document.querySelector('input[name="Id"]').value;
+
+                await fetch('/Todo/UpdateArchivedStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: todoId, isArchived: isChecked })
+                });
+            });
+        });
+    </script>
+}

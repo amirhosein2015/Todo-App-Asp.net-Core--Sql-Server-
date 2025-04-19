@@ -1,0 +1,191 @@
+﻿@model List<TodoApp.Models.Todo>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/css/todoarchivestyle.css" rel="stylesheet" />
+</head>
+
+
+
+
+<div class="container">
+    <div class="row">
+        <!-- پنل سمت چپ -->
+        <div class="side-panel">
+            <h3>@User.Identity.Name</h3>
+            <hr />
+            <!-- دکمه All Todo -->
+            <form asp-controller="Todo" asp-action="Index" method="get">
+                <button type="submit" class="panel-btn">Todo Page</button>
+            </form>
+
+           
+        </div>
+
+        <!-- محتوای اصلی -->
+        <div class="main-content">
+         
+
+
+    <!-- کادر آرشیو شده‌ها -->
+    <div class="todo-category" id="archived-todos">
+        <h3>Archived</h3>
+        <hr />
+        <div class="todo-header">
+            <span>Title</span>
+            <span>Priority</span>
+            <span>Date</span>
+            <span>Finish</span>
+            <span>Archived</span>
+            <span>Edit</span>
+            <span>Delete</span>
+        </div>
+        @foreach (var todo in Model.Where(t => t.IsArchived))
+        {
+            <div class="todo-item" style="background-color: @(todo.Priority == "Low" ? "#ffffcc" : todo.Priority == "Normal" ? "#ccffcc" : "#ffcccc");">
+                <span class="todo-title @(todo.IsFinished ? "finished-text" : "")">@todo.Title</span>
+                <span class="todo-priority">@todo.Priority</span>
+                <span class="todo-date">@todo.CreatedAt.ToString("yyyy-MM-dd")</span>
+                <label>Done
+                    <input type="checkbox" data-id="@todo.Id" data-field="IsFinished"
+                    @(todo.IsFinished ? "checked" : "") onchange="updateTodoStatus(this)" />
+                </label>
+                <label>Archive
+                    <input type="checkbox" data-id="@todo.Id" data-field="IsArchived"
+                    @(todo.IsArchived ? "checked" : "") onchange="updateTodoStatus(this)" />
+                </label>
+                <button class="btn-edit" onclick="openEditModal(@todo.Id)">Edit</button>
+                  @*       <form asp-action="DeleteArchiveTodo" asp-controller="Todo" method="post" class="inline-form">
+                    <input type="hidden" name="id" value="@todo.Id" />
+                    <button type="submit" class="btn-delete">Delete</button> *@
+                        <form asp-action="Delete" asp-controller="Todo" method="post" class="inline-form">
+                            <input type="hidden" name="id" value="@todo.Id" />
+                            <input type="hidden" name="returnUrl" value="Archived" />
+                            <button type="submit" class="btn-delete">Delete</button>
+                      
+
+
+                </form>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- مدال ویرایش -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeEditModal()">&times;</span>
+        <div id="editModalBody">
+            <!-- محتوا با Ajax پر می‌شود -->
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+
+<style>
+
+  
+</style>
+<script>
+         function updateTodoStatus(checkbox) {
+        const todoId = checkbox.getAttribute("data-id");
+        const field = checkbox.getAttribute("data-field");
+        const value = checkbox.checked;
+
+        const todoItem = checkbox.closest(".todo-item");
+
+        // اعمال تغییرات مرتبط با آرشیو یا اتمام
+        if (field === "IsFinished") {
+            const titleElement = todoItem.querySelector(".todo-title");
+            titleElement.classList.toggle("finished-text", value);
+        } else if (field === "IsArchived") {
+            if (value) {
+                todoItem.style.display = "none"; // حذف بصری آیتم از لیست
+            } else {
+                // در صورت لغو آرشیو، آیتم به‌سرعت حذف شود
+                todoItem.style.opacity = "0";
+                setTimeout(() => {
+                    todoItem.remove();
+                }, 300); // حذف آیتم با انیمیشن
+            }
+        }
+
+        // ارسال درخواست به سرور
+        checkbox.disabled = true;
+        fetch('/Todo/UpdateStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ id: todoId, field: field, value: value })
+        }).then(response => {
+            if (!response.ok) {
+                checkbox.checked = !value; // بازگرداندن وضعیت در صورت خطا
+                todoItem.style.opacity = "1"; // بازگرداندن ظاهر
+            }
+        }).finally(() => {
+            checkbox.disabled = false;
+        });
+    }
+
+
+
+        function openEditModal(todoId) {
+        const modal = document.getElementById("editModal");
+        const modalBody = document.getElementById("editModalBody");
+
+        fetch(`/Todo/Edit/${todoId}`)
+            .then(response => response.text())
+            .then(html => {
+                modalBody.innerHTML = html;
+                modal.style.display = "block";
+
+                // مدیریت ارسال فرم ویرایش با AJAX
+                const editForm = modalBody.querySelector("form");
+                editForm.onsubmit = function (event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(editForm);
+                    fetch(editForm.action, {
+                        method: editForm.method,
+                        body: formData,
+                        headers: {
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    }).then(response => {
+                        if (response.ok) {
+                            modal.style.display = "none"; // بستن مدال
+
+                            // به‌روزرسانی DOM
+                            const todoItem = document.querySelector(`[data-id="${todoId}"]`).closest(".todo-item");
+                            todoItem.querySelector(".todo-title").innerText = formData.get("Title");
+                            todoItem.querySelector(".todo-priority").innerText = formData.get("Priority");
+                            todoItem.style.backgroundColor = getPriorityColor(formData.get("Priority")); // تغییر رنگ بر اساس اولویت
+                        } else {
+                            alert("Error saving changes");
+                        }
+                    });
+                };
+            });
+    }
+
+    // تابع برای تنظیم رنگ آیتم بر اساس اولویت
+    function getPriorityColor(priority) {
+        return priority === "Low" ? "#ffffcc" :
+               priority === "Normal" ? "#ccffcc" :
+               "#ffcccc"; // High
+    }
+
+
+    function closeEditModal() {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "none";
+    }
+</script>

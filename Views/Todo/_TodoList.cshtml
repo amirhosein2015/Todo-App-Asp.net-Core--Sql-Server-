@@ -1,0 +1,51 @@
+﻿@model TodoApp.ViewModels.TodoViewModel
+
+
+
+<div class="todo-categories">
+    @foreach (var category in new[] { "Low", "Normal", "High" })
+    {
+        <div class="todo-category" id="@category.ToLower()-priority">
+            <h3>@category Priority</h3>
+            <hr />
+            <div class="todo-header">
+                <span>Title</span>
+                <span>Priority</span>
+                <span>Date</span>
+                <span>Finish</span>
+                <span>Archived</span>
+                <span>Edit</span>
+                <span>Delete</span>
+            </div>
+            @foreach (var todo in Model.Todos.Where(t => t.Priority == category && !t.IsArchived))
+            {
+                <div class="todo-item" style="background-color: @(category == "Low" ? "#ffffcc" : category == "Normal" ? "#ccffcc" : "#ffcccc");">
+                    <span class="todo-title @(todo.IsFinished ? "finished-text" : "")">@todo.Title</span>
+                    <span class="todo-priority">@todo.Priority</span>
+                    <span class="todo-date">@todo.CreatedAt?.ToString("yyyy-MM-dd") ?? "N/A"</span>
+
+                    <label>
+                        Done
+                        <input type="checkbox" data-id="@todo.Id" data-field="IsFinished"
+                        @(todo.IsFinished ? "checked" : "") onchange="updateTodoStatus(this)" />
+                    </label>
+                    <label>
+                        Archive
+                        <input type="checkbox" data-id="@todo.Id" data-field="IsArchived"
+                        @(todo.IsArchived ? "checked" : "") onchange="updateTodoStatus(this)" />
+                    </label>
+                    <form asp-action="Delete" asp-controller="Todo" method="post" class="inline-form">
+                        <input type="hidden" name="id" value="@todo.Id" />
+                        <button type="submit" class="btn-delete">Delete</button>
+                    </form>
+                    <button class="btn-edit" onclick="openEditModal(@todo.Id)">Edit</button>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+<style>
+   
+</style>

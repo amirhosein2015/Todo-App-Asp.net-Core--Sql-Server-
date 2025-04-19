@@ -1,0 +1,121 @@
+﻿
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(145deg, #FF6FD8, #3813C2);
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.form-container {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.2);
+    width: 340px;
+    color: white;
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #e0e0e0;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        outline: none;
+    }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .input-group input:focus {
+            border-color: #7db9ff;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+    .input-group button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(145deg, #f853fd, #fd53b0); /* رنگ‌های سرخابی */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .input-group button:hover {
+            background: linear-gradient(145deg, #ff71e7, #ff62ee);
+        }
+
+.error {
+    color: #ff6767;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.toggle-form {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: white;
+}
+
+    .toggle-form a {
+        color: #a0d9ff;
+        text-decoration: none;
+    }
+
+        .toggle-form a:hover {
+            text-decoration: underline;
+        }
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+    .checkbox-group input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        font-size: 14px;
+        cursor: pointer;
+    }

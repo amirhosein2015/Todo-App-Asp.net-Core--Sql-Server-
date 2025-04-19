@@ -1,0 +1,155 @@
+﻿body {
+    margin-top: 10px;
+    background: linear-gradient(145deg, #FF6FD8, #3813C2);
+}
+
+.container {
+    max-width: 1200px; /* عرض کل محتوا */
+    margin: 0 auto;
+    padding: 30px; 
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.todo-category {
+    margin-bottom: 20px;
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.todo-header, .todo-item {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+    gap: 15px; 
+    align-items: center;
+}
+
+.todo-item {
+    padding: 8px; 
+    border-radius: 5px;
+    backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: inherit; /* حفظ رنگ اصلی */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.3);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    width: 70%; /* عرض مدال */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+    .close:hover, .close:focus {
+        color: #aaa;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+.finished-text {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+button {
+    border-radius: 7px;
+    border: 1px solid gray;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* استایل‌های مرتبط با پنل کناری */
+.row {
+    display: flex;
+}
+
+.side-panel {
+    width: 25%; /* عرض پنل جانبی */
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.3);
+    padding: 75px 70px; 
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px 0 0 15px;
+}
+
+    .side-panel h3 {
+        margin-bottom: 20px;
+        text-align: center;
+        color: gray;
+        font-weight: bold;
+    }
+
+.panel-btn {
+    display: block;
+    width: 85%; 
+    padding: 10px;
+    margin: 10px auto;
+    background-color: #ff5fcf;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+    .panel-btn:hover {
+        background-color: #3813C2;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+.main-content {
+    flex: 1;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 0 15px 15px 0;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* استایل‌های مرتبط با لینک‌ها */
+a {
+    text-decoration: none;
+}
+
+    a:hover {
+        color: white;
+    }
