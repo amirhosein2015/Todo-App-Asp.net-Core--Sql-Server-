@@ -39,8 +39,12 @@ This repository contains a modern web application for managing to-do tasks, buil
 ```bash
    git clone https://github.com/amirhosein2015/Todo-App-Asp.net-Core--Sql-Server-.git
 ```
+
 2.Open the solution in Visual Studio (or VS Code) and restore NuGet packages.
+
+
 3.Configure the connection string in appsettings.json (or appsettings.Development.json) to point to your local SQL Server instance.
+
 4.Apply migrations to create the database schema:
 ```bash
 dotnet ef database update
