@@ -44,13 +44,11 @@ This repository contains a modern web application for managing to-do tasks, buil
 3.Configure the connection string in appsettings.json (or appsettings.Development.json) to point to your local SQL Server instance.
 
 4.Apply migrations to create the database schema:
- ```bash
-   dotnet ef database update
-
+dotnet ef database update
 
 5.Run the application:
- ```bash
-    dotnet run
+dotnet run
+
 
 
  6.Open your browser and navigate to https://localhost:5001 (or the port assigned) to access the application. 
