@@ -52,7 +52,7 @@ dotnet ef database update
  6.Open your browser and navigate to https://localhost:5001 (or the port assigned) to access the application. 
 
 
- ##🛠 Features & Enhancements
+ ## 🛠 Features & Enhancements
 
 ✅ User authentication: register, login, logout, manage profile.
 
@@ -67,7 +67,7 @@ dotnet ef database update
 🔧 Planned improvements: integration of real–time updates using SignalR, user-role management, drag-and-drop task ordering.
 
 
-##📚 Directory Structure
+## 📚 Directory Structure
 /Controllers        – MVC controllers for handling HTTP requests  
 /Data               – DbContext and migrations for EF Core  
 /Models             – Domain models and view-models  
@@ -77,15 +77,15 @@ Program.cs          – Entry point and ASP.NET Core setup
 appsettings.json    – Configuration (e.g., connection string)
 
 
-##👥 Contributing
+## 👥 Contributing
 
 Contributions are welcome! Feel free to open issues for bugs or feature requests, or submit pull requests for enhancements. Please follow the repository’s code style and include meaningful commit messages.
 
-##📄 License
+## 📄 License
 
 This project is open-source and available under the MIT License
 .
 
-##💡 Why Use This?
+## 💡 Why Use This?
 
 If you’re a developer (especially using C# / .NET) and you want a simple but fully-featured starter application for task management, this Todo App is a great base. You can learn by exploring how user authentication is handled, how tasks are modeled and filtered in the database, and how the UI connects to the backend. Also, you can extend it to more complex systems (e.g., team tasks, Kanban board, project management) with minimal effort.
