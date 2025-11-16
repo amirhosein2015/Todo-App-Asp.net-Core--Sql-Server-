@@ -14,7 +14,8 @@
 
 ## 🧩 Project Overview  
 
-![p-13](https://github.com/user-attachments/assets/446a26cd-d37b-43d6-aae7-6e157b7dcb6d)
+![p-15](https://github.com/user-attachments/assets/20feacc3-381a-44b1-8ebf-79f6704ce25e)
+
 
 
 This repository contains a modern web application for managing to-do tasks, built using ASP.NET Core and SQL Server. Key features include:
